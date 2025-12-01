@@ -1,99 +1,142 @@
-import React from 'react'
-import { useEffect } from 'react'
-import { useState } from 'react'
-import { useParams } from 'react-router-dom';
-import './mangaPage.css';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
 import { IoChevronBack } from "react-icons/io5";
-import axios from 'axios';
+import axios from "axios";
+import "./mangaPage.css";
 
 const MangaPage = () => {
-  const [volumeChaptersData, setVolumeChaptersData] = useState({})
-  const [mangaData, setMangaData] = useState([])
-  let { mangaTitle } = useParams();
-  let { mangaID } = useParams();
+  const [volumeChaptersData, setVolumeChaptersData] = useState({});
+  const [mangaData, setMangaData] = useState({});
+  const [languageSelected, setLanguageSelected] = useState("en");
+  const [loadingChapters, setLoadingChapters] = useState(false);
+  const { mangaTitle, mangaID } = useParams();
 
-  const fetchVolumesChaptersData = (languageSelected) => {
-    axios.get(`https://corsproxy.io/?https://api.mangadex.dev/manga/${mangaID}/aggregate?translatedLanguage%5B%5D=${languageSelected}`)
-    .then((res) => setVolumeChaptersData(res.data.volumes))
-  }
+  const fetchVolumesChaptersData = async (lang) => {
+    setLoadingChapters(true);
+    try {
+      const res = await axios.get(
+        `https://corsproxy.io/?https://api.mangadex.dev/manga/${mangaID}/aggregate?translatedLanguage%5B%5D=${lang}`
+      );
+      setVolumeChaptersData(res.data.volumes || {});
+    } catch (err) {
+      console.error(err);
+      setVolumeChaptersData({});
+    } finally {
+      setLoadingChapters(false);
+    }
+  };
 
   useEffect(() => {
+    const fetchManga = async () => {
+      try {
+        const res = await axios.get(
+          `https://corsproxy.io/?https://api.mangadex.org/manga/${mangaID}?includes%5B%5D=cover_art&includes%5B%5D=author`
+        );
+        setMangaData(res.data.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchManga();
+    fetchVolumesChaptersData(languageSelected);
+  }, [languageSelected, mangaID]);
 
-    axios.get(`https://corsproxy.io/?https://api.mangadex.org/manga/${mangaID}?includes%5B%5D=manga&includes%5B%5D=cover_art&includes%5B%5D=author`)
-    .then((res) => setMangaData(res.data.data))
+  if (!mangaData?.attributes) return <h2>Loading...</h2>;
 
-    fetchVolumesChaptersData("pt-br")
+  const coverFile = mangaData.relationships?.find(
+    (rel) => rel.type === "cover_art"
+  )?.attributes?.fileName;
+  const coverUrl = `https://uploads.mangadex.org/covers/${mangaData.id}/${coverFile}`;
 
-  }, [])
-  
-
+  const sortedChapters = (chapters) =>
+    Object.values(chapters).sort((a, b) => {
+      const numA = parseFloat(a.chapter) || 0;
+      const numB = parseFloat(b.chapter) || 0;
+      if (numA === numB && a.chapter && b.chapter) {
+        return a.chapter.localeCompare(b.chapter, undefined, {
+          numeric: true,
+          sensitivity: "base",
+        });
+      }
+      return numA - numB;
+    });
 
   return (
-    <div className='mangaDataContainer'>
-      {
-        mangaData.relationships && mangaData.relationships.length > 0 ?
-          <>
-
-            <header className='mangaDataHeaderContainer'>
-
-              <div
-                className='backgroundImage'
-                style={{
-                  backgroundImage: `url("https://uploads.mangadex.org/covers/${mangaData.id}/${mangaData.relationships.find(rel => rel.type === "cover_art").attributes.fileName}")`,
-                }} />
-
-              <div className='mangaDataHeader'>
-                <Link to={`/MangaPneu/`} className='backBtn'>
-                  <IoChevronBack />
-                </Link>
-                <h1 className='mangaDataTitle'>{mangaTitle}</h1>
-                <img className='mangaDataCoverImg' src={`https://uploads.mangadex.org/covers/${mangaData.id}/${mangaData.relationships.find(rel => rel.type === "cover_art").attributes.fileName}`} />
-              </div>
-
-            </header>
-
-            <div className='mangaDetails'>
-              <ul className='tagListContainer'>
-                {mangaData.attributes.tags.map((tag, index) => (
-                  <li key={index}>{tag.attributes.name.en || "No tag."}</li>
-                ))}
-              </ul>
-
-              <p className='mangaDescription'>{mangaData.attributes.description.en || "No description available."}</p>
+    <div className="mangaPage">
+      <header
+        className="mangaHeader"
+        style={{ backgroundImage: `url(${coverUrl})` }}
+      >
+        <div className="overlay" />
+        <Link to={`/MangaMind/`} className="backBtn">
+          <IoChevronBack />
+        </Link>
+        <div className="mangaHeaderContent">
+          <img src={coverUrl} alt={mangaTitle} className="mangaCover" />
+          <div className="mangaInfo">
+            <h1 className="mangaTitle">{mangaTitle}</h1>
+            <p className="mangaAuthor">
+              {mangaData.relationships?.find((r) => r.type === "author")
+                ?.attributes?.name || "Unknown Author"}
+            </p>
+            <p className="mangaDesc">
+              {mangaData.attributes.description[languageSelected] ||
+                mangaData.attributes.description.en ||
+                "No description available."}
+            </p>
+            <div className="tags">
+              {mangaData.attributes.tags.slice(0, 6).map((tag, i) => (
+                <span key={i} className="tag">
+                  {tag.attributes.name.en}
+                </span>
+              ))}
             </div>
-          </>
-
-          :
-          <h1>No data available.</h1>
-      }
-
-      <main className='mainContent'>
-
-        <select onChange={e => fetchVolumesChaptersData(e.target.value)} className='maxWidth-300'>
-          <option value="pt-br">Português</option>
-          <option value="en">English</option>
-          <option value="ja">日本語</option>
-        </select>
-        <div className='volumesGridContainer'>
-          {Object.values(volumeChaptersData).map((volumeData, index) => (
-            <div key={index} className='volumeContainer'>
-              <ul className='chaptersContainer'>
-                <h3>Volume N°: {volumeData.volume}</h3>
-                {Object.values(volumeData.chapters).map((chaptersData, index) => (
-                  <li key={index}>
-                    <Link className='chapterListItem' to={`/MangaPneu/${mangaTitle}/${mangaID}/${chaptersData.id}`}>Chapter N°: {chaptersData.chapter}</Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          </div>
         </div>
-
+      </header>
+      <main className="chaptersSection">
+        <div className="chapterHeader">
+          <h2>Volumes & Chapters</h2>
+          <select
+            value={languageSelected}
+            onChange={(e) => setLanguageSelected(e.target.value)}
+            className="langSelect"
+          >
+            <option value="en">English</option>
+            <option value="uk">Ukrainian</option>
+            <option value="pt-br">Português</option>
+            <option value="ja">日本語</option>
+            <option value="ru">Русский</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+          </select>
+        </div>
+        {loadingChapters ? (
+          <p className="noChapters">Loading chapters...</p>
+        ) : Object.keys(volumeChaptersData).length === 0 ? (
+          <p className="noChapters">No chapters available for this language.</p>
+        ) : (
+          Object.values(volumeChaptersData).map((volume, vIndex) => (
+            <div key={volume.volume || vIndex} className="volumeBlock">
+              <h3 className="volumeTitle">Volume {volume.volume || "?"}</h3>
+              <div className="chaptersGrid">
+                {sortedChapters(volume.chapters).map((ch) => (
+                  <Link
+                    to={`/MangaMind/${mangaTitle}/${mangaID}/${ch.id}`}
+                    key={ch.id}
+                    className="chapterCard"
+                  >
+                    <p className="chapterNumber">Chapter {ch.chapter || "?"}</p>
+                    {ch.title && <p className="chapterTitle">{ch.title}</p>}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))
+        )}
       </main>
+    </div>
+  );
+};
 
-    </div >
-  )
-}
-
-export default MangaPage
+export default MangaPage;

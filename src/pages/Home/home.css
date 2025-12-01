@@ -1,73 +1,59 @@
-.appContainer{
-    display: flex;
-    flex-direction: column;
-    background-color: #171B27;
+.appContainer {
+  display: flex;
+  flex-direction: column;
+  background-color: #171b27;
+  width: 100%;
+  box-sizing: border-box;
+  align-items: stretch;
 }
 
-.appHeaderContainer{
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    background-color: #000000;
-    position: fixed;
-    width: 100vw;
-    height: 15vh;
-    padding: 4rem .8rem;
-    overflow: hidden;
-    gap: 1rem;
+.mainTopPadding {
+  padding-top: 0;
 }
 
-.appTitleImg{
-    width: 40%;
-    max-width: 200px;
+.listContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  padding: 2rem 1rem 4rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.navContainer{
-    display: flex;
-    border-bottom: 1px solid white;
-    color: white;
-    justify-content: center;
+.listContainer .listItem {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.inputSearchManga{
-    color: white;
-    background: none;
-    border: none;
-    outline: none;
-    height: fit-content;
-    padding: 0 5px;
-
+.libraryTitle {
+  color: whitesmoke;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 1rem 0 1rem 0;
+  text-align: center;
 }
 
-.listContainer{
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    padding: 20vh 1rem;
-    background-color: #111111;
-    min-height: 100vh;
+@media screen and (max-width: 649px) {
+  .listContainer {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 1.5rem 0.75rem 4rem;
+  }
 }
 
 @media screen and (min-width: 650px) {
-    .navContainer{
-        font-size: 1.3rem;
-    }
-    .inputSearchManga{
-        font-size: 1.3rem;
-    }
-    .listContainer{
-        margin: 0 10vw;
-        padding: 20vh 3rem;
-    }
+  .listContainer {
+    padding: 1rem 3rem 4rem;
+  }
 }
 
 @media screen and (min-width: 1024px) {
-    .appContainer{
-        align-items: center;
-    }
-    .listContainer{
-        grid-template-columns: repeat(5, 1fr);
-        gap: 1.5rem;
-        width: 80%;
-    }
+  .listContainer {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
 }

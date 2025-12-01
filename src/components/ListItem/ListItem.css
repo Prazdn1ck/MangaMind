@@ -1,19 +1,49 @@
-.itemContainer{
-    display: flex;
-    flex-direction: column;
-    max-width: 200px;
+.itemContainer {
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  background-color: #1c1f2a;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.listItem{
-    display: flex;
-    flex-direction: column;
+.mangaCoverImg {
+  width: 100%;
+  height: 245px;
+  object-fit: cover;
+  border-radius: 5px 5px 5px 5px;
 }
 
-.listItemLink{
-    text-decoration: none;
-    color: whitesmoke;
+.listItem {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
 }
 
-.listItemAuthor{
-    color: gray;
+.listItemLink {
+  text-decoration: none;
+  color: whitesmoke;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 4px;
+  transition: color 0.2s ease;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.itemContainer:hover .listItemLink {
+  color: #f0a500;
+}
+
+.listItemAuthor {
+  display: none;
+}
+
+.coverLink {
+  display: block;
+  cursor: pointer;
 }

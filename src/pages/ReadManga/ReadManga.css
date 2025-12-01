@@ -1,6 +1,149 @@
-.readMangaContainer{
-    display: flex;
-    justify-content: center;
-    min-height: 100vh;
-    background-color: rgb(20, 20, 20);
+.readMangaContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #111;
+  padding-top: 70px;
+}
+
+.backBtn {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  color: white;
+  font-size: 2rem;
+  z-index: 100;
+}
+
+.toggleModeBtn {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 100;
+  background: linear-gradient(180deg, #ff7a7a, #ff5f5f);
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mangaPagesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 800px;
+  padding: 1rem;
+}
+
+.mangaImageContainer {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+  cursor: pointer;
+}
+
+.mangaPageImage {
+  width: 100%;
+  display: block;
+}
+
+.pageCounter {
+  color: #fff;
+  font-size: 1rem;
+}
+
+.backBtnFloating {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  font-size: 1.5rem;
+  color: #fff;
+  z-index: 101;
+}
+
+.readMangaContainer .container {
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.floatingHeader {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: rgba(20, 20, 24, 0.85);
+  backdrop-filter: blur(6px);
+  border-radius: 8px;
+  z-index: 100;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.floatingHeader.hidden {
+  transform: translate(-50%, -120%);
+  opacity: 0;
+}
+
+.floatingHeader.visible {
+  transform: translateX(-50%);
+  opacity: 1;
+}
+
+.currentChapterTitle {
+  color: #fff;
+  font-weight: bold;
+  text-align: center;
+}
+
+.chapterSelect {
+  background: #222;
+  color: #fff;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.modeSwitchBtn {
+  background: #ff5f5f;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.verticalScrollContainer {
+  scroll-behavior: smooth;
+}
+
+.verticalScrollContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.verticalScrollContainer {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
 }

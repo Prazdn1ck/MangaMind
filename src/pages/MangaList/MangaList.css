@@ -1,0 +1,35 @@
+.appContainer {
+  background: #171b27;
+  min-height: 100vh;
+}
+
+.mainTopPadding {
+  padding-top: 12px;
+}
+
+.siteContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.libraryTitle {
+  color: #fff;
+  font-size: 1.6rem;
+  margin: 8px 0 16px;
+  text-align: left;
+  padding-left: 16px;
+}
+
+.infoText {
+  color: #aaa;
+  text-align: center;
+  margin: 16px 0;
+}
+
+.errorText {
+  color: #ff8a8a;
+  text-align: center;
+  margin: 16px 0;
+}
